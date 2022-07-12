@@ -9,10 +9,10 @@
 6.echo \ "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-![mountains](/Images/1.png "1")
-![mountains](/Images/2.png "1")
-![mountains](/Images/3.png "1")
+![mountains](Images/1.png "1")
+![mountains](Images/2.png "1")
+![mountains](Images/3.png "1")
 
 ## сделать каталог /var/lib/postgres
 
-![mountains](/Images/4.png "4")
+![mountains](Images/4.png "4")
