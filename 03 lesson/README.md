@@ -1,4 +1,4 @@
-# Установка и настройка PostgteSQL в контейнере Docker
+# Установка и настройка PostgreSQL в контейнере Docker
 ## Установка Docker Engine
 Установка Docker Engine согласно оф. документации:
 1. sudo apt-get remove docker docker-engine docker.io containerd runc
