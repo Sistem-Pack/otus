@@ -83,3 +83,21 @@ postgres=# SELECT * FROM test;
 (2 rows)
 
 postgres=#
+
+## подключится к контейнеру с сервером с ноутбука/компьютера извне инстансов GCP/места установки докера
+
+sudo psql -p 5432 -U postgres -h 192.168.218.135 -d postgres -W
+
+Password for user postgres:
+psql (14.4 (Debian 14.4-1.pgdg110+1))
+Type "help" for help.
+
+postgres=#
+
+## удалить контейнер с сервером
+root@user-virtual-machine:~# docker stop pg
+pg
+root@user-virtual-machine:~# docker rm pg
+pg
+
+
