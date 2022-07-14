@@ -41,3 +41,45 @@ Digest: sha256:3e2eba0a6efbeb396e086c332c5a85be06997d2cf573d34794764625f405df4e
 Status: Downloaded newer image for postgres:14
 338db57784cfeb70860a45077b3f96e7b53f04dfbda95506d6d2dc3e35b630fd
 
+## развернуть контейнер с клиентом postgres
+
+docker run -it --rm --network pg-net --name pg-client postgres:14 psql -h pg -U postgres
+Password for user postgres:
+psql (14.4 (Debian 14.4-1.pgdg110+1))
+Type "help" for help.
+
+postgres=#
+
+## подключится из контейнера с клиентом к контейнеру с сервером и сделать таблицу с парой строк
+
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(3 rows)
+
+postgres=# SELECT current_database();
+ current_database
+------------------
+ postgres
+(1 row)
+
+postgres=# CREATE TABLE test (i serial, amount int);
+CREATE TABLE
+postgres=# INSERT INTO test(amount) VALUES (100);
+INSERT 0 1
+postgres=# INSERT INTO test(amount) VALUES (500);
+INSERT 0 1
+postgres=# SELECT * FROM test;
+ i | amount
+---+--------
+ 1 |    100
+ 2 |    500
+(2 rows)
+
+postgres=#
