@@ -20,8 +20,7 @@ mkdir /var/lib/postgres
 	docker network create pg-net
 	ea75b5d386df7da459d235d9c3251f4bff5f5e6266ffcf0727fc91ec2c649901
 2. подключаем созданную сеть к контейнеру сервера Postgres:
-2.1. sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/l
-ib/postgres:/var/lib/postgresql/data postgres:14
+2.1. sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
 Unable to find image 'postgres:14' locally
 14: Pulling from library/postgres
 461246efe0a7: Pull complete
@@ -95,9 +94,31 @@ Type "help" for help.
 postgres=#
 
 ## удалить контейнер с сервером
+
 root@user-virtual-machine:~# docker stop pg
 pg
 root@user-virtual-machine:~# docker rm pg
 pg
 
+## создать его заново
 
+root@user-virtual-machine:~# sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
+d2470e492649a697d7b20d86789e3e7a0e63021106a6755c21ced2db83e33323
+
+## подключится снова из контейнера с клиентом к контейнеру с сервером
+
+docker run -it --rm --network pg-net --name pg-client postgres:14 psql -h pg -U postgres
+Password for user postgres:
+psql (14.4 (Debian 14.4-1.pgdg110+1))
+Type "help" for help.
+
+postgres=#
+
+## проверить, что данные остались на месте
+
+select * from test;
+ i | amount
+---+--------
+ 1 |    100
+ 2 |    500
+(2 rows)
