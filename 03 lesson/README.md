@@ -1,6 +1,7 @@
 # Установка и настройка PostgreSQL в контейнере Docker
 ## Установка Docker Engine
 Установка Docker Engine согласно оф. документации:
+```
 1. sudo apt-get remove docker docker-engine docker.io containerd runc
 2. sudo apt-get update 
 3. apt-get install \    ca-certificates \    curl \    gnupg \    lsb-release
@@ -8,19 +9,22 @@
 5. curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 6.echo \ "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+```
 ## сделать каталог /var/lib/postgres
-
+```
 mkdir /var/lib/postgres
-
+```
 ## развернуть контейнер с PostgreSQL 14 смонтировав в него /var/lib/postgres
 
 1. Подготовимся к следующим пунктам 
 1.1. Создадим Докер-сеть:
+```
 	docker network create pg-net
 	ea75b5d386df7da459d235d9c3251f4bff5f5e6266ffcf0727fc91ec2c649901
+```
 2. подключаем созданную сеть к контейнеру сервера Postgres:
-2.1. sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
+```
+sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
 Unable to find image 'postgres:14' locally
 14: Pulling from library/postgres
 461246efe0a7: Pull complete
@@ -39,18 +43,22 @@ f3a57056b036: Pull complete
 Digest: sha256:3e2eba0a6efbeb396e086c332c5a85be06997d2cf573d34794764625f405df4e
 Status: Downloaded newer image for postgres:14
 338db57784cfeb70860a45077b3f96e7b53f04dfbda95506d6d2dc3e35b630fd
+```
 
 ## развернуть контейнер с клиентом postgres
 
+```
 docker run -it --rm --network pg-net --name pg-client postgres:14 psql -h pg -U postgres
 Password for user postgres:
 psql (14.4 (Debian 14.4-1.pgdg110+1))
 Type "help" for help.
 
 postgres=#
+```
 
 ## подключится из контейнера с клиентом к контейнеру с сервером и сделать таблицу с парой строк
 
+```
 postgres=# \l
                                  List of databases
    Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
@@ -82,9 +90,11 @@ postgres=# SELECT * FROM test;
 (2 rows)
 
 postgres=#
+```
 
 ## подключится к контейнеру с сервером с ноутбука/компьютера извне инстансов GCP/места установки докера
 
+```
 sudo psql -p 5432 -U postgres -h 192.168.218.135 -d postgres -W
 
 Password for user postgres:
@@ -92,21 +102,27 @@ psql (14.4 (Debian 14.4-1.pgdg110+1))
 Type "help" for help.
 
 postgres=#
+```
 
 ## удалить контейнер с сервером
 
+```
 root@user-virtual-machine:~# docker stop pg
 pg
 root@user-virtual-machine:~# docker rm pg
 pg
+```
 
 ## создать его заново
 
+```
 root@user-virtual-machine:~# sudo docker run --name pg --network pg-net -e POSTGRES_PASSWORD=1 -d -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:14
 d2470e492649a697d7b20d86789e3e7a0e63021106a6755c21ced2db83e33323
+```
 
 ## подключится снова из контейнера с клиентом к контейнеру с сервером
 
+```
 docker run -it --rm --network pg-net --name pg-client postgres:14 psql -h pg -U postgres
 Password for user postgres:
 psql (14.4 (Debian 14.4-1.pgdg110+1))
@@ -122,3 +138,4 @@ select * from test;
  1 |    100
  2 |    500
 (2 rows)
+```
