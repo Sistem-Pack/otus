@@ -195,3 +195,15 @@ Allocating group tables: done
 Writing superblocks and filesystem accounting information: готово
 root@user-virtual-machine:~# mount -o defaults /dev/sdb /mnt/data
 ```
+## сделайте пользователя postgres владельцем /mnt/data
+```
+root@user-virtual-machine:~# chown -R postgres:postgres /mnt/data/
+```
+## перенесите содержимое /var/lib/postgres/14 в /mnt/data
+```
+root@user-virtual-machine:~# mv /var/lib/postgresql/14 /mnt/data
+```
+## попытайтесь запустить кластер
+```
+
+```
