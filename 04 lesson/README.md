@@ -147,3 +147,44 @@ update-alternatives: используется /usr/share/postgresql/14/man/man1/
 Обрабатываются триггеры для systemd (245.4-4ubuntu3.17) …
 Обрабатываются триггеры для man-db (2.9.1-1) …
 Обрабатываются триггеры для libc-bin (2.31-0ubuntu9.9) …
+## проверьте что кластер запущен через sudo -u postgres pg_lsclusters
+root@user-virtual-machine:~# sudo -u postgres pg_lsclusters
+Ver Cluster Port Status Owner    Data directory              Log file
+14  main    5432 online postgres /var/lib/postgresql/14/main /var/log/postgresql/postgresql-14-main.log
+root@user-virtual-machine:~#
+## зайдите из под пользователя postgres в psql и сделайте произвольную таблицу с произвольным содержимым postgres=# create table test(c1 text); postgres=# insert into test values('1'); \q
+```
+sudo -u postgres psql -p 5433
+postgres=# create table test(c1 text); insert into test values('1'); \q
+INSERT 0 1
+```
+## остановите postgres например через sudo -u postgres pg_ctlcluster 14 main stop
+root@user-virtual-machine:~# sudo -u postgres pg_ctlcluster 14 main stop
+Cluster is not running.
+## подключить диск
+Подключен диск на 10 Gb через VMware Workstation
+
+```
+Диск /dev/sdb: 10 GiB, 10737418240 байт, 20971520 секторов
+Disk model: VMware Virtual S
+Единицы: секторов по 1 * 512 = 512 байт
+Размер сектора (логический/физический): 512 байт / 512 байт
+Размер I/O (минимальный/оптимальный): 512 байт / 512 байт
+```
+
+## Размечаем диск
+root@user-virtual-machine:~# mkdir /mnt/data
+root@user-virtual-machine:~# mkfs.ext4 -L postgresdata /dev/sdb
+mke2fs 1.45.5 (07-Jan-2020)
+Creating filesystem with 2621440 4k blocks and 655360 inodes
+Filesystem UUID: 2721b736-a4ab-4b29-86ec-8d4e44d59fbc
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+
+Allocating group tables: done
+Сохранение таблицы inod'ов: done
+Создание журнала (16384 блоков): готово
+Writing superblocks and filesystem accounting information: готово
+
+root@user-virtual-machine:~# mount -o defaults /dev/sdb /mnt/data
+
