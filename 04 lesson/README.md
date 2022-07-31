@@ -211,5 +211,30 @@ Error: /var/lib/postgresql/14/main is not accessible or does not exist
 ## напишите получилось или нет и почему
 
 ```
-Не получилось, так как нет данных в нужном месте и необходимо произвести настройку конфигурационного файла
+Не получилось, так как нет данных в нужном месте и необходимо произвести настройку конфигурационного файла.
+Выполняем его настройку: 
+root@user-virtual-machine:~# root@user-virtual-machine:~# nano /etc/postgresql/14/main/postgresql.conf
+Комбинацией Ctrl+W находим строку data_directory на новое data_directory = '/mnt/data/main'
+```
+## Запускаем кластер
+```
+root@user-virtual-machine:~# pg_ctlcluster 14 main start
+root@user-virtual-machine:~# pg_lsclusters
+Ver Cluster Port Status Owner    Data directory Log file
+14  main    5432 online postgres /mnt/data/main /var/log/postgresql/postgresql-14-main.log
+```
+## зайдите через через psql и проверьте содержимое ранее созданной таблицы
+root@user-virtual-machine:~# su - postgres
+postgres@postgresql:~$ psql
+psql (14.4 (Ubuntu 14.4-1.pgdg20.04+1))
+Type "help" for help.
+
+postgres=# select * from test;
+    c1
+-----------
+ some data
+(1 row)
+
+```
+Все данные на месте
 ```
