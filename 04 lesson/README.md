@@ -224,6 +224,7 @@ Ver Cluster Port Status Owner    Data directory Log file
 14  main    5432 online postgres /mnt/data/main /var/log/postgresql/postgresql-14-main.log
 ```
 ## зайдите через через psql и проверьте содержимое ранее созданной таблицы
+```
 root@user-virtual-machine:~# su - postgres
 postgres@postgresql:~$ psql
 psql (14.4 (Ubuntu 14.4-1.pgdg20.04+1))
@@ -234,6 +235,7 @@ postgres=# select * from test;
 -----------
  some data
 (1 row)
+```
 
 ```
 Все данные на месте
