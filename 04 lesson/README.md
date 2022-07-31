@@ -205,5 +205,11 @@ root@user-virtual-machine:~# mv /var/lib/postgresql/14 /mnt/data
 ```
 ## попытайтесь запустить кластер
 ```
+root@user-virtual-machine:~# sudo -u postgres pg_ctlcluster 14 main start
+Error: /var/lib/postgresql/14/main is not accessible or does not exist
+```
+## напишите получилось или нет и почему
 
+```
+Не получилось, так как нет данных в нужном месте и необходимо произвести настройку конфигурационного файла
 ```
