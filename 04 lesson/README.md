@@ -1,5 +1,6 @@
 # Физический уровень PostgreSQL
 ## поставьте на нее PostgreSQL 14 через sudo apt
+```
 root@user-virtual-machine:~# sudo apt update && sudo apt upgrade -y -q && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && sudo apt-get update && sudo apt -y install postgresql-14
 Сущ:1 http://ru.archive.ubuntu.com/ubuntu focal InRelease
 Сущ:2 http://security.ubuntu.com/ubuntu focal-security InRelease
@@ -147,11 +148,14 @@ update-alternatives: используется /usr/share/postgresql/14/man/man1/
 Обрабатываются триггеры для systemd (245.4-4ubuntu3.17) …
 Обрабатываются триггеры для man-db (2.9.1-1) …
 Обрабатываются триггеры для libc-bin (2.31-0ubuntu9.9) …
+```
 ## проверьте что кластер запущен через sudo -u postgres pg_lsclusters
+```
 root@user-virtual-machine:~# sudo -u postgres pg_lsclusters
 Ver Cluster Port Status Owner    Data directory              Log file
 14  main    5432 online postgres /var/lib/postgresql/14/main /var/log/postgresql/postgresql-14-main.log
 root@user-virtual-machine:~#
+```
 ## зайдите из под пользователя postgres в psql и сделайте произвольную таблицу с произвольным содержимым postgres=# create table test(c1 text); postgres=# insert into test values('1'); \q
 ```
 sudo -u postgres psql -p 5433
@@ -159,11 +163,14 @@ postgres=# create table test(c1 text); insert into test values('1'); \q
 INSERT 0 1
 ```
 ## остановите postgres например через sudo -u postgres pg_ctlcluster 14 main stop
+```
 root@user-virtual-machine:~# sudo -u postgres pg_ctlcluster 14 main stop
 Cluster is not running.
+```
 ## подключить диск
+```
 Подключен диск на 10 Gb через VMware Workstation
-
+```
 ```
 Диск /dev/sdb: 10 GiB, 10737418240 байт, 20971520 секторов
 Disk model: VMware Virtual S
@@ -173,6 +180,7 @@ Disk model: VMware Virtual S
 ```
 
 ## Размечаем диск
+```
 root@user-virtual-machine:~# mkdir /mnt/data
 root@user-virtual-machine:~# mkfs.ext4 -L postgresdata /dev/sdb
 mke2fs 1.45.5 (07-Jan-2020)
@@ -185,6 +193,5 @@ Allocating group tables: done
 Сохранение таблицы inod'ов: done
 Создание журнала (16384 блоков): готово
 Writing superblocks and filesystem accounting information: готово
-
 root@user-virtual-machine:~# mount -o defaults /dev/sdb /mnt/data
-
+```
