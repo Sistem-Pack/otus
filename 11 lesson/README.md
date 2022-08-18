@@ -8,6 +8,7 @@
 
 ## поставить на неё PostgreSQL 14 любым способом
 
+```
 root@user-virtual-machine:~# sudo apt update && sudo apt upgrade -y -q && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && sudo apt-get update && sudo apt -y install postgresql-14
 Сущ:1 http://ru.archive.ubuntu.com/ubuntu focal InRelease
 Сущ:2 http://security.ubuntu.com/ubuntu focal-security InRelease
