@@ -226,6 +226,296 @@ run
 sudo -u postgres psql sbtest -c "select count(*) as tables, sum(n_live_tup) as rows, pg_size_pretty(pg_database_size('sbtest')) as size from pg_stat_user_tables"
 ```
 
-Column | Column
------- | ------
-Cell   | Cell 
+таблиц | cтрок	   | размер
+------ | --------- | ----------
+100    | 100000000 | 24 Гб
+
+### Делаем тест для каждого типа настроек
+
+```
+sysbench \
+--db-driver=pgsql \
+--report-interval=5 \
+--oltp-table-size=1000000 \
+--oltp-tables-count=100 \
+--threads=64 \
+--time=600 \
+--pgsql-host=localhost \
+--pgsql-port=5432 \
+--pgsql-user=sbtest \
+--pgsql-password=sbtest \
+--pgsql-db=sbtest \
+/usr/share/sysbench/tests/include/oltp_legacy/oltp.lua \
+run 2>&1 | tee web.txt
+```
+
+### Результат HDD
+
+```
+SQL statistics:
+    queries performed:
+        read:                            4865126
+        write:                           1389986
+        other:                           695048
+        total:                           6950160
+    transactions:                        347499 (579.02 per sec.)
+    queries:                             6950160 (11580.68 per sec.)
+    ignored errors:                      10     (0.02 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+General statistics:
+total time:                          600.1494s
+total number of events:              347499
+
+
+Latency (ms):
+min:                                    7.05
+avg:                                  110.52
+max:                                 1216.23
+95th percentile:                      240.02
+sum:                             38404223.34
+
+
+Threads fairness:
+events (avg/stddev):           5429.6719/25.35
+execution time (avg/stddev):   600.0660/0.05
+```
+
+### Результат Веб - приложение 
+
+Настройки
+```
+# DB Version: 14
+# OS Type: linux
+# DB Type: web
+# Total Memory (RAM): 32 GB
+# CPUs num: 8
+# Connections num: 64
+# Data Storage: ssd
+max_connections = 64
+shared_buffers = 8GB
+effective_cache_size = 24GB
+maintenance_work_mem = 2GB
+checkpoint_completion_target = 0.9
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 32MB
+min_wal_size = 1GB
+max_wal_size = 4GB
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4
+```
+
+```
+SQL statistics:
+    queries performed:
+        read:                            8897616
+        write:                           2542122
+        other:                           1271124
+        total:                           12710862
+    transactions:                        635535 (1059.03 per sec.)
+    queries:                             12710862 (21180.83 per sec.)
+    ignored errors:                      9      (0.01 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+General statistics:
+total time:                          600.1097s
+total number of events:              635535
+
+
+Latency (ms):
+min:                                    5.77
+avg:                                   60.42
+max:                                  401.58
+95th percentile:                      121.08
+sum:                             38400941.40
+
+
+Threads fairness:
+events (avg/stddev):           9930.2344/46.32
+execution time (avg/stddev):   600.0147/0.03
+```
+
+### Результат OLTP
+
+```
+# DB Version: 14
+# OS Type: linux
+# DB Type: oltp
+# Total Memory (RAM): 32 GB
+# CPUs num: 8
+# Connections num: 100
+# Data Storage: ssd
+max_connections = 100
+shared_buffers = 8GB
+effective_cache_size = 24GB
+maintenance_work_mem = 2GB
+checkpoint_completion_target = 0.9
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 20971kB
+min_wal_size = 2GB
+max_wal_size = 8GB
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4
+```
+
+```
+SQL statistics:
+    queries performed:
+        read:                            10673712
+        write:                           3049599
+        other:                           1524827
+        total:                           15248138
+    transactions:                        762397 (1270.43 per sec.)
+    queries:                             15248138 (25408.94 per sec.)
+    ignored errors:                      11     (0.02 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+General statistics:
+total time:                          600.1071s
+total number of events:              762397
+
+
+Latency (ms):
+min:                                    5.50
+avg:                                   50.37
+max:                                  428.74
+95th percentile:                       80.03
+sum:                             38400023.08
+
+
+Threads fairness:
+events (avg/stddev):           11912.4531/50.89
+execution time (avg/stddev):   600.0004/0.03
+```
+
+При работе теста видны просадки в tps как в случае с прошлым тестом, причина увеличение wal size
+результат еще лучше чем в предыдущий 1059 против 1270 tps
+
+### Результат Веб-приложение
+
+```
+# DB Version: 14
+# OS Type: linux
+# DB Type: oltp
+# Total Memory (RAM): 32 GB
+# CPUs num: 8
+# Connections num: 100
+# Data Storage: ssd
+max_connections = 100
+shared_buffers = 8GB
+effective_cache_size = 24GB
+work_mem = 328MB
+maintenance_work_mem = 2GB
+min_wal_size = 512MB
+max_wal_size = 2GB
+checkpoint_completion_target = 0.7
+wal_buffers = 16MB
+max_connections = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+```
+
+```
+SQL statistics:
+    queries performed:
+        read:                            6314112
+        write:                           1803988
+        other:                           902040
+        total:                           9020140
+    transactions:                        450998 (751.55 per sec.)
+    queries:                             9020140 (15031.28 per sec.)
+    ignored errors:                      10     (0.02 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+General statistics:
+total time:                          600.0895s
+total number of events:              450998
+
+
+Latency (ms):
+min:                                    7.05
+avg:                                   85.15
+max:                                  487.11
+95th percentile:                      139.85
+sum:                             38401788.42
+
+
+Threads fairness:
+events (avg/stddev):           7046.8438/21.24
+execution time (avg/stddev):   600.0279/0.02
+```
+
+В результате видно что после тестирования результат стал хуже
+Наибольшим ключевым фактором по параметрам играет wal size
+Для проверки будет проведен еще один тест
+
+
+### Проверочный тест
+
+```
+# DB Version: 14
+# OS Type: linux
+# DB Type: oltp
+# Total Memory (RAM): 32 GB
+# CPUs num: 8
+# Connections num: 100
+# Data Storage: ssd
+max_connections = 100
+shared_buffers = 8GB
+effective_cache_size = 24GB
+maintenance_work_mem = 2GB
+checkpoint_completion_target = 0.9
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 256MB
+min_wal_size = 2GB
+max_wal_size = 8GB
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4
+```
+
+```
+SQL statistics:
+    queries performed:
+        read:                            9828700
+        write:                           2808179
+        other:                           1404117
+        total:                           14040996
+    transactions:                        702048 (1169.79 per sec.)
+    queries:                             14040996 (23395.88 per sec.)
+    ignored errors:                      2      (0.00 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+General statistics:
+total time:                          600.1463s
+total number of events:              702048
+
+
+Latency (ms):
+min:                                    6.12
+avg:                                   54.70
+max:                                  334.50
+95th percentile:                       92.42
+sum:                             38399754.62
+
+
+Threads fairness:
+events (avg/stddev):           10969.5000/45.31
+execution time (avg/stddev):   599.9962/0.04
+```
+
+Результат стал хуже
+
+
