@@ -9,7 +9,7 @@ docker exec -it db psql -U postgres -f /demo/demo_small.sql
 
 ## Database Image
 
-![Image alt]https://github.com/Sistem-Pack/otus/blob/main/20%20lesson/flights_base.svg
+![Image alt](https://github.com/Sistem-Pack/otus/blob/main/20%20lesson/flights_base.svg)
 
 ```
 -- Реализовать прямое соединение двух или более таблиц
